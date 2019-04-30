@@ -25,3 +25,8 @@ proc checkPattern*[W, H: static[int], T](a: T, b: T): Grid[W, H, T] =
         result[i][j] = a
       else:
         result[i][j] = b
+
+proc map[W, H: static[int], T, U](grid: Grid[W, H, T], f: proc(t: T): U): Grid[W, H, U] =
+  for j in 0..H-1:
+    for i in 0..W-1:
+      result[i][j] = f(grid[i][j])

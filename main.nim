@@ -1,5 +1,6 @@
 import sdl2
 import grid
+import conway
 
 proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
   let now = getTicks()
