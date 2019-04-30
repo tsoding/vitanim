@@ -1,7 +1,5 @@
 import sdl2
 
-sdl2.init(INIT_EVERYTHING)
-
 type Grid[W, H: static[int]] =
   array[0 .. H - 1, array[0 .. W - 1, Color]]
 
@@ -20,29 +18,7 @@ proc render[W, H: static[int]](grid: Grid[W, H], renderer: RendererPtr) =
         grid[i][j].a)
       renderer.fillRect(cell)
 
-var screenWidth: cint = 640
-var screenHeight: cint = 480
-
-var window = createWindow(
-  "Vitanim", 100, 100,
-  screenWidth, screenHeight,
-  SDL_WINDOW_SHOWN or SDL_WINDOW_RESIZABLE)
-var renderer = createRenderer(window, -1, 0)
-
-let targetFramePeriod: uint32 = 20
-var frameTime: uint32 = 0
-
-var
-  evt = sdl2.defaultEvent
-  runGame = true
-
-# TODO: render is not implemented
-proc render() =
-  renderer.setDrawColor(255, 0, 0, 255)
-  var rect: Rect = (x: cint(0), y: cint(0), w: cint(50), h: cint(50))
-  renderer.fillRect(rect)
-
-proc limitFrameRate() =
+proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
   let now = getTicks()
   if frameTime > now:
     delay(frameTime - now)
@@ -60,18 +36,39 @@ const red: Color = (r: uint8(255), g: uint8(0), b: uint8(0), a: uint8(255))
 const black: Color = (r: uint8(0), g: uint8(0), b: uint8(0), a: uint8(255))
 const gameGrid = checkPattern[10, 10](red, black)
 
-while runGame:
-  while pollEvent(evt):
-    # TODO: can we just use case here 4Head
-    if evt.kind == QuitEvent:
-      runGame = false
-      break
+proc main() =
+  sdl2.init(INIT_EVERYTHING)
+  defer: sdl2.quit()
 
-  renderer.setDrawColor(0, 0, 0, 255)
-  renderer.clear()
-  # render()
-  gameGrid.render(renderer)
-  renderer.present()
-  limitFrameRate()
+  var screenWidth: cint = 640
+  var screenHeight: cint = 480
 
-destroy(window)
+  var window = createWindow(
+    "Vitanim", 100, 100,
+    screenWidth, screenHeight,
+    SDL_WINDOW_SHOWN or SDL_WINDOW_RESIZABLE)
+  defer: destroy(window)
+
+  var renderer = createRenderer(window, -1, 0)
+  defer: destroy(renderer)
+
+  let targetFramePeriod: uint32 = 20
+  var frameTime: uint32 = 0
+
+  var evt = sdl2.defaultEvent
+  var runGame = true
+
+  while runGame:
+    while pollEvent(evt):
+      # TODO: can we just use case here 4Head
+      if evt.kind == QuitEvent:
+        runGame = false
+        break
+
+    renderer.setDrawColor(0, 0, 0, 255)
+    renderer.clear()
+    gameGrid.render(renderer)
+    renderer.present()
+    limitFrameRate(frameTime, targetFramePeriod)
+
+when isMainModule: main()
