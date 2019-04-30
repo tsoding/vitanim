@@ -10,7 +10,6 @@ proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
 
 const red: Color = (r: uint8(255), g: uint8(0), b: uint8(0), a: uint8(255))
 const black: Color = (r: uint8(0), g: uint8(0), b: uint8(0), a: uint8(255))
-const gameGrid = checkPattern[100, 100, Color](red, black)
 
 proc main() =
   sdl2.init(INIT_EVERYTHING)
@@ -18,6 +17,8 @@ proc main() =
 
   var screenWidth: cint = 640
   var screenHeight: cint = 480
+  var gameGrid = sparse[10, 10, Cell](
+    Dead, @[(1, 0, Alive), (2, 1, Alive), (0, 2, Alive), (1, 2, Alive), (2, 2, Alive)])
 
   var window = createWindow(
     "Vitanim", 100, 100,
@@ -36,10 +37,13 @@ proc main() =
 
   while runGame:
     while pollEvent(evt):
-      # TODO: can we just use case here 4Head
-      if evt.kind == QuitEvent:
-        runGame = false
-        break
+      case evt.kind:
+        of QuitEvent:
+          runGame = false
+        of MouseButtonDown:
+          gameGrid = gameGrid.next()
+        else:
+          discard
 
     renderer.setDrawColor(0, 0, 0, 255)
     renderer.clear()

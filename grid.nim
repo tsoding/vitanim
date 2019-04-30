@@ -4,7 +4,6 @@ type Grid*[W, H: static[int], T] =
   array[0 .. H - 1, array[0 .. W - 1, T]]
 
 proc render*[W, H: static[int]](grid: Grid[W, H, Color], renderer: RendererPtr) =
-  # TODO: how to just initialize this with default value?
   var rect: Rect = (x: cint(0), y: cint(0), w: cint(50), h: cint(50))
   renderer.getViewPort(rect)
   let cellWidth = rect.w.float / W.float
@@ -26,7 +25,18 @@ proc checkPattern*[W, H: static[int], T](a: T, b: T): Grid[W, H, T] =
       else:
         result[i][j] = b
 
-proc map[W, H: static[int], T, U](grid: Grid[W, H, T], f: proc(t: T): U): Grid[W, H, U] =
+proc fill*[W, H: static[int], T](value: T): Grid[W, H, T] =
+  for j in 0..H-1:
+    for i in 0..W-1:
+      result[i][j] = value
+
+proc sparse*[W, H: static[int], T](default: T, xs: seq[(int, int, T)]): Grid[W, H, T] =
+  result = fill[W, H, T](default)
+  for x in xs:
+    let (i, j, value) = x
+    result[i][j] = value
+
+proc map*[W, H: static[int], T, U](grid: Grid[W, H, T], f: proc(t: T): U): Grid[W, H, U] =
   for j in 0..H-1:
     for i in 0..W-1:
       result[i][j] = f(grid[i][j])
