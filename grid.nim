@@ -1,9 +1,9 @@
 import sdl2
 
-type Grid*[W, H: static[int]] =
-  array[0 .. H - 1, array[0 .. W - 1, Color]]
+type Grid*[W, H: static[int], T] =
+  array[0 .. H - 1, array[0 .. W - 1, T]]
 
-proc render*[W, H: static[int]](grid: Grid[W, H], renderer: RendererPtr) =
+proc render*[W, H: static[int]](grid: Grid[W, H, Color], renderer: RendererPtr) =
   # TODO: how to just initialize this with default value?
   var rect: Rect = (x: cint(0), y: cint(0), w: cint(50), h: cint(50))
   renderer.getViewPort(rect)
@@ -18,7 +18,7 @@ proc render*[W, H: static[int]](grid: Grid[W, H], renderer: RendererPtr) =
         grid[i][j].a)
       renderer.fillRect(cell)
 
-proc checkPattern*[W, H: static[int]](a: Color, b: Color): Grid[W, H] =
+proc checkPattern*[W, H: static[int], T](a: T, b: T): Grid[W, H, T] =
   for j in 0 .. H - 1:
     for i in 0 .. W - 1:
       if (i + j) mod 2 == 0:

@@ -9,7 +9,7 @@ proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
 
 const red: Color = (r: uint8(255), g: uint8(0), b: uint8(0), a: uint8(255))
 const black: Color = (r: uint8(0), g: uint8(0), b: uint8(0), a: uint8(255))
-const gameGrid = checkPattern[100, 100](red, black)
+const gameGrid = checkPattern[100, 100, Color](red, black)
 
 proc main() =
   sdl2.init(INIT_EVERYTHING)
