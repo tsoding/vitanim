@@ -35,3 +35,8 @@ proc next*[W, H: static[int]](grid: Grid[W, H, Cell]): Grid[W, H, Cell] =
   for j in 0..H-1:
     for i in 0..W-1:
       result[i][j] = grid.next(i, j)
+
+proc `not`*(cell: Cell): Cell =
+  case cell:
+    of Alive: Dead
+    of Dead: Alive

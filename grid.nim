@@ -4,7 +4,7 @@ type Grid*[W, H: static[int], T] =
   array[0 .. H - 1, array[0 .. W - 1, T]]
 
 proc render*[W, H: static[int]](grid: Grid[W, H, Color], renderer: RendererPtr) =
-  var rect: Rect = (x: cint(0), y: cint(0), w: cint(50), h: cint(50))
+  var rect: Rect
   renderer.getViewPort(rect)
   let cellWidth = rect.w.float / W.float
   let cellHeight = rect.h.float / H.float

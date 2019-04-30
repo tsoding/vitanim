@@ -8,16 +8,16 @@ proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
     delay(frameTime - now)
   frameTime += targetFramePeriod
 
-const red: Color = (r: uint8(255), g: uint8(0), b: uint8(0), a: uint8(255))
-const black: Color = (r: uint8(0), g: uint8(0), b: uint8(0), a: uint8(255))
-
 proc main() =
   sdl2.init(INIT_EVERYTHING)
   defer: sdl2.quit()
 
+  const gridWidth = 20
+  const gridHeight = 20
+
   var screenWidth: cint = 640
   var screenHeight: cint = 480
-  var gameGrid = sparse[10, 10, Cell](
+  var gameGrid = sparse[gridWidth, gridHeight, Cell](
     Dead, @[(1, 0, Alive), (2, 1, Alive), (0, 2, Alive), (1, 2, Alive), (2, 2, Alive)])
 
   var window = createWindow(
@@ -40,10 +40,22 @@ proc main() =
       case evt.kind:
         of QuitEvent:
           runGame = false
+        # TODO: there is no way to clean the field
         of MouseButtonDown:
-          gameGrid = gameGrid.next()
-        else:
-          discard
+          var button = cast[MouseButtonEventPtr](addr(evt))
+          case button.button:
+            of 1:
+                var rect: Rect
+                renderer.getViewPort(rect)
+                let cellWidth = rect.w.float / gridWidth.float
+                let cellHeight = rect.h.float / gridHeight.float
+                let i = (button.x.float / cellWidth).int
+                let j = (button.y.float / cellHeight).int
+                gameGrid[i][j] = not gameGrid[i][j]
+            of 3:
+              gameGrid = gameGrid.next()
+            else: discard
+        else: discard
 
     renderer.setDrawColor(0, 0, 0, 255)
     renderer.clear()
