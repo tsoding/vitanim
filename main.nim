@@ -55,6 +55,12 @@ proc main() =
             of 3:
               gameGrid = gameGrid.next()
             else: discard
+        of KeyDown:
+          var keyboard = cast[KeyboardEventPtr](addr(evt))
+          case keyboard.keysym.sym:
+            of 'f'.ord:
+              gameGrid = fill[gridWidth, gridHeight, Cell](Dead)
+            else: discard
         else: discard
 
     renderer.setDrawColor(0, 0, 0, 255)
