@@ -1,5 +1,5 @@
 import sdl2/sdl
-import grid, conway
+import grid, conway, hexagrid
 
 proc limitFrameRate(frameTime: var uint32, targetFramePeriod: uint32) =
   let now = getTicks()
@@ -40,7 +40,6 @@ proc main() =
       case event.kind:
         of Quit:
           runGame = false
-        # TODO: there is no way to clean the field
         of MouseButtonDown:
           let event = event.button
           case event.button:
@@ -66,8 +65,11 @@ proc main() =
 
     discard renderer.setRenderDrawColor Color(a: 255)
     discard renderer.renderClear()
-    gameGrid.render(renderer)
+    discard renderer.setRenderDrawColor(Color(r: 255, a: 255))
+    renderer.drawRegularPolygon((screenWidth.float * 0.5, screenHeight.float * 0.5), 100.0, 6)
+    # gameGrid.render(renderer)
     renderer.renderPresent()
     limitFrameRate(frameTime, targetFramePeriod)
 
-when isMainModule: main()
+when isMainModule:
+  main()
