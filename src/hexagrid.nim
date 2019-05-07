@@ -19,6 +19,7 @@ proc drawRegularPolygon*(renderer: Renderer, center: tuple[x, y: float], radius:
     let y1 = sin((i + 1).float * angle + a) * radius + center.y
     discard renderer.renderDrawLine(x0.cint, y0.cint, x1.cint, y1.cint)
 
+# TODO: drawHexagrid does not stick cells together
 proc drawHexagrid*(renderer: Renderer, W, H: int) =
   var rect: Rect
   renderer.renderGetViewport(addr rect)
