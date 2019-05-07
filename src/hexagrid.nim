@@ -18,3 +18,16 @@ proc drawRegularPolygon*(renderer: Renderer, center: tuple[x, y: float], radius:
     let x1 = cos((i + 1).float * angle + a) * radius + center.x
     let y1 = sin((i + 1).float * angle + a) * radius + center.y
     discard renderer.renderDrawLine(x0.cint, y0.cint, x1.cint, y1.cint)
+
+proc drawHexagrid*(renderer: Renderer, W, H: int) =
+  var rect: Rect
+  renderer.renderGetViewport(addr rect)
+  let radius = rect.w.float / W.float
+  let halfRadius = radius * 0.5
+  for y in 0..<H:
+    for x in 0..<W:
+      if x mod 2 == 0:
+        renderer.drawRegularPolygon((x.float * radius + halfRadius, y.float * radius + halfRadius), halfRadius, 6)
+      else:
+        renderer.drawRegularPolygon((x.float * radius + halfRadius, y.float * radius + radius), halfRadius, 6)
+

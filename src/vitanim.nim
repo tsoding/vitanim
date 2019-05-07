@@ -66,7 +66,7 @@ proc main() =
     discard renderer.setRenderDrawColor Color(a: 255)
     discard renderer.renderClear()
     discard renderer.setRenderDrawColor(Color(r: 255, a: 255))
-    renderer.drawRegularPolygon((screenWidth.float * 0.5, screenHeight.float * 0.5), 100.0, 6)
+    renderer.drawHexagrid(10, 10)
     # gameGrid.render(renderer)
     renderer.renderPresent()
     limitFrameRate(frameTime, targetFramePeriod)
